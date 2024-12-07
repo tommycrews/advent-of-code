@@ -2,7 +2,7 @@
 
 if (args.Length == 0)
 {
-	foreach (ISolution solution in SolutionFactory.GetAllSolutions())
+	foreach (Solution solution in SolutionFactory.GetAllSolutions())
 	{
 		ExecuteSolution(solution);
 	}
@@ -11,9 +11,9 @@ if (args.Length == 0)
 
 ExecuteSolution(SolutionFactory.GetSolution(int.Parse(args[0])));
 
-static void ExecuteSolution(ISolution solution)
+static void ExecuteSolution(Solution solution)
 {
-	string title = $"Solutions for '{solution.Name}' (day {solution.Day})";
+	string title = $"Solutions for '{solution.Name}' (day {solution.DayNumber})";
 	
 	Console.WriteLine();
 	Console.WriteLine(title);

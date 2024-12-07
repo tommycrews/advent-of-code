@@ -1,23 +1,20 @@
 namespace Crews.P2.AdventOfCode.Year2024.Solutions;
 
-public class Day4 : ISolution
+public class Day04 : Solution
 {
-	private readonly string[] _lines = File.ReadAllLines("./InputData/Day4.txt");
+	public override string Name => "Ceres Search";
 
-	public string Name => "Ceres Search";
-	public int Day => 4;
-
-	public string ExecutePart1() => new string[] { "XMAS", "SAMX" }
+	public override string ExecutePart1() => new string[] { "XMAS", "SAMX" }
 		.Select(s => GetHorizontalCount(s)
-			+ GetVerticalCount(_lines, s)
-			+ GetForwardDiagonalCount(_lines, s)
-			+ GetBackwardDiagonalCount(_lines, s))
+			+ GetVerticalCount(InputLines, s)
+			+ GetForwardDiagonalCount(InputLines, s)
+			+ GetBackwardDiagonalCount(InputLines, s))
 		.Sum()
 		.ToString();
 
-	public string ExecutePart2() => GetXMasCount(_lines).ToString();
+	public override string ExecutePart2() => GetXMasCount(InputLines).ToString();
 
-	private int GetHorizontalCount(string substring) => _lines
+	private int GetHorizontalCount(string substring) => InputLines
 		.Select(line => line.Split(substring).Length - 1)
 		.Sum();
 

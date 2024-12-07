@@ -1,8 +1,8 @@
 namespace Crews.P2.AdventOfCode.Year2024.Solutions;
 
-public class Day7 : ISolution
+public class Day07 : Solution
 {
-	private readonly Dictionary<long, int[]> _equations = File.ReadAllLines("./InputData/Day7.txt")
+	private Dictionary<long, int[]> Equations => InputLines
 		.Select(line => line.Split(":", StringSplitOptions.TrimEntries))
 		.Select(splitLine => new KeyValuePair<long, int[]>(long.Parse(splitLine[0]), splitLine[1]
 			.Split(' ')
@@ -10,13 +10,12 @@ public class Day7 : ISolution
 			.ToArray()))
 		.ToDictionary();
 
-	public string Name => "Bridge Repair";
-	public int Day => 7;
+	public override string Name => "Bridge Repair";
 
-	public string ExecutePart1() => GetTotal().ToString();
-	public string ExecutePart2() => GetTotal(useConcatenation: true).ToString();
+	public override string ExecutePart1() => GetTotal().ToString();
+	public override string ExecutePart2() => GetTotal(useConcatenation: true).ToString();
 
-	public long GetTotal(bool useConcatenation = false) => _equations
+	public long GetTotal(bool useConcatenation = false) => Equations
 		.Where(equation => RecursivelyGetPermutations(equation.Value, useConcatenation).Contains(equation.Key))
 		.Select(equation => equation.Key)
 		.Sum();

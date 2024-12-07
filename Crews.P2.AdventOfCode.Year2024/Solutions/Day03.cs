@@ -2,20 +2,15 @@ using System.Text.RegularExpressions;
 
 namespace Crews.P2.AdventOfCode.Year2024.Solutions;
 
-public class Day3 : ISolution
+public class Day03 : Solution
 {
-	private readonly string _data;
+	public override string Name => "Mull It Over";
 
-	public string Name => "Mull It Over";
-	public int Day => 3;
-
-	public Day3() => _data = File.ReadAllText("./InputData/Day3.txt");
-
-	public string ExecutePart1() => GetProducts(_data)
+	public override string ExecutePart1() => GetProducts(InputText)
 		.Sum()
 		.ToString();
 
-	public string ExecutePart2() => _data
+	public override string ExecutePart2() => InputText
 		.Split("do()")
 		.Select(blocks => blocks.Split("don't()").First())
 		.Select(doBlocks => string.Join("", doBlocks))

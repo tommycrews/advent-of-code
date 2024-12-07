@@ -1,20 +1,18 @@
 namespace Crews.P2.AdventOfCode.Year2024.Solutions;
 
-public class Day2 : ISolution
+public class Day02 : Solution
 {
 	private readonly IEnumerable<IEnumerable<int>> _reports;
 
-	public string Name => "Red-Nosed Reports";
-	public int Day => 2;
+	public override string Name => "Red-Nosed Reports";
 
-	public Day2() => _reports = File.ReadAllLines("./InputData/Day2.txt")
+	public Day02() => _reports = InputLines
 		.Select(line => line
 			.Split(' ')
 			.Select(number => int.Parse(number)));
 
-	public string ExecutePart1() => GetSafeReportCount().ToString();
-
-	public string ExecutePart2() => GetSafeReportCount(allowBadLevel: true).ToString();
+	public override string ExecutePart1() => GetSafeReportCount().ToString();
+	public override string ExecutePart2() => GetSafeReportCount(allowBadLevel: true).ToString();
 
 	private int GetSafeReportCount(bool allowBadLevel = false) => _reports
 		.Select(report => new Record(report.ToArray(), allowBadLevel).Safe)

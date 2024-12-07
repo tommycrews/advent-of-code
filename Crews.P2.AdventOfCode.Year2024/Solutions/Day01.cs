@@ -1,16 +1,15 @@
 namespace Crews.P2.AdventOfCode.Year2024.Solutions;
 
-public class Day1 : ISolution
+public class Day01 : Solution
 {
 	private readonly List<int> _leftList = [];
 	private readonly List<int> _rightList = [];
 
-	public string Name => "Historian Hysteria";
-	public int Day => 1;
+	public override string Name => "Historian Hysteria";
 
-	public Day1() => PopulateColumns();
+	public Day01() => PopulateColumns();
 
-	public string ExecutePart1()
+	public override string ExecutePart1()
 	{
 		_leftList.Sort();
 		_rightList.Sort();
@@ -21,14 +20,14 @@ public class Day1 : ISolution
 			.ToString();
 	}
 
-	public string ExecutePart2() => _leftList
+	public override string ExecutePart2() => _leftList
 		.Select(number => _rightList.Count(instance => instance == number) * number)
 		.Sum()
 		.ToString();
 
 	private void PopulateColumns()
 	{
-		IEnumerable<string[]> pairs = File.ReadAllLines("./InputData/Day1.txt")
+		IEnumerable<string[]> pairs = InputLines
 			.Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries));
 
 		foreach (string[] pair in pairs)
