@@ -6,6 +6,7 @@
     <RootNamespace>Crews.P2.AdventOfCode.Year2024</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);SYSLIB1045</NoWarn>
   </PropertyGroup>
 
 </Project>
