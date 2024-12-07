@@ -13,7 +13,7 @@ ExecuteSolution(SolutionFactory.GetSolution(int.Parse(args[0])));
 
 static void ExecuteSolution(ISolution solution)
 {
-	string title = $"Solutions for {solution.Name} (day {solution.Day})";
+	string title = $"Solutions for '{solution.Name}' (day {solution.Day})";
 	
 	Console.WriteLine();
 	Console.WriteLine(title);
