@@ -2,99 +2,136 @@ namespace Crews.P2.AdventOfCode.Year2024.Solutions;
 
 public class Day09 : Solution
 {
-	public override string Name => "Disk Fragmenter";
+  public override string Name => "Disk Fragmenter";
 
-	public override string ExecutePart1() => GetChecksum(ExpandDrive(InputText)).ToString();
+  public override string ExecutePart1() => GetChecksum(ExpandDrive(InputText)).ToString();
 
-	public override string ExecutePart2() => "Not implemented";
+  public override string ExecutePart2() => GetChecksumPart2(ExpandDrive(InputText)).ToString();
 
-	private static List<int> ExpandDrive(string data)
-	{
-		List<int> blocks = [];
-		for (int index = 0; index < data.Length; index++)
-		{
-			for (int blockValue = 0; blockValue < (int)char.GetNumericValue(data[index]); blockValue++)
-			{
-				blocks.Add(index % 2 == 0 ? index / 2 : -1);
-			}
-		}
-		return blocks;
-	}
+  private static List<File> ExpandDrive(string data)
+  {
+    List<File> files = new();
+    for (int index = 0; index < data.Length; index++)
+    {
+      files.Add(
+        new()
+        {
+          ID = index % 2 == 0 ? index / 2 : -1,
+          Length = (int)char.GetNumericValue(data[index]),
+        }
+      );
+    }
+    return files;
+  }
 
-	private static long GetChecksum(IEnumerable<int> blocks)
-	{
-		int blocksLength = blocks.Count();
-		int pointerIndex = blocksLength - 1;
-		long checksum = 0;
+  private static long GetChecksum(List<File> files)
+  {
+    int blocksLength = files.Count;
+    int pointerIndex = blocksLength - 1;
+    long checksum = 0;
 
-		int evaluated = 0;
-		// Don't actually rearrange the blocks. Just calculete in-place.
-		for (int index = 0; index < blocksLength; index++)
-		{
-			if (index > pointerIndex) break;
+    int evaluated = 0;
+    // Don't actually rearrange the blocks. Just calculete in-place.
+    for (int index = 0; index < blocksLength; index++)
+    {
+      if (index > pointerIndex)
+        break;
 
-			if (blocks.ElementAt(index) == -1)
-			{
-				while (blocks.ElementAt(pointerIndex) == -1) pointerIndex--;
-				if (index > pointerIndex) break;
+      if (files[index].IsFreeSpace)
+      {
+        while (files[pointerIndex].IsFreeSpace)
+          pointerIndex--;
+        if (index > pointerIndex)
+          break;
 
-				checksum += index * blocks.ElementAt(pointerIndex);
-				pointerIndex--;
-			}
-			else checksum += index * blocks.ElementAt(index);
+        checksum += index * files[pointerIndex].ID;
+        pointerIndex--;
+      }
+      else
+        checksum += index * files[index].ID;
 
-			evaluated++;
-			if (evaluated >= blocksLength) break;
-		}
-		return checksum;
-	}
+      evaluated++;
+      if (evaluated >= blocksLength)
+        break;
+    }
+    return checksum;
+  }
 
-	private static long GetChecksumPart2(IEnumerable<int> data)
-	{
-		(int, int) block = (data.ElementAt(0), 1);
-		List<(int, int)> blocks = [];
+  private static long GetChecksumPart2(List<File> files)
+  {
+    Console.WriteLine(
+      string.Join(", ", files.Take(100).Select(file => $"{file.ID} ({file.Length})"))
+    );
 
-		for (int i = 0; i < data.Count(); i++)
-		{
-			int currentValue = data.ElementAt(i);
-			if (blocks.Last().Item1 == currentValue)
-			{
-				block = (block.Item1, block.Item2 + 1);
-			}
-			else
-			{
-				blocks.Add(block);
-				block = (data.ElementAt(i), 1);
-			}
-		}
+    Console.WriteLine();
 
-		int checksum = 0;
-		IEnumerable<(int, int)> fileBlocks = blocks.Where(block => block.Item1 != -1);
-		int reverseIndex = blocks.Count - 1;
-		int pointerIndex = 0;
+    Console.WriteLine(
+      string.Join(", ", files.Skip(19900).Select(file => $"{file.ID} ({file.Length})"))
+    );
 
-		for (int index = 0; index < blocks.Count; index++)
-		{
-			block = blocks[index];
-			if (index > reverseIndex) break;
+    Console.WriteLine();
 
-			if (block.Item1 == -1)
-			{
-				for (int i = 0; i < blocks[reverseIndex].Item2; i++)
-				{
-					checksum += blocks[reverseIndex].Item1;
-				}
-				pointerIndex += block.Item2;
-			}
-			else
-			{
-				for (int i = 0; i < block.Item2; i++)
-				{
-					checksum += block.Item1 * pointerIndex;
-					pointerIndex++;
-				}
-			}
-			pointerIndex += blocks[index].Item2;
-		}
-	}
+    for (int reverseIndex = files.Count - 1; reverseIndex >= 0; reverseIndex--)
+    {
+      File reverseFile = files[reverseIndex];
+      if (reverseFile.IsFreeSpace)
+        continue;
+
+      for (int index = 0; index < reverseIndex; index++)
+      {
+        File searchFile = files[index];
+        if (!searchFile.IsFreeSpace || searchFile.Length < reverseFile.Length)
+          continue;
+
+        int hangingLength = searchFile.Length - reverseFile.Length;
+
+        files[index] = reverseFile;
+        files[reverseIndex] = new() { ID = -1, Length = reverseFile.Length };
+
+        if (hangingLength > 0)
+        {
+          files.Insert(index + 1, new() { ID = -1, Length = hangingLength });
+          reverseIndex++;
+        }
+        break;
+      }
+    }
+
+    Console.WriteLine(
+      string.Join(", ", files.Take(100).Select(file => $"{file.ID} ({file.Length})"))
+    );
+
+    return CalculateChecksum(files);
+  }
+
+  private static long CalculateChecksum(List<File> files)
+  {
+    int pointerIndex = 0;
+    long checksum = 0;
+
+    for (int index = 0; index < files.Count; index++)
+    {
+      File file = files[index];
+      if (file.IsFreeSpace)
+      {
+        pointerIndex += file.Length;
+        continue;
+      }
+
+      for (int fileIndex = 0; fileIndex < file.Length; fileIndex++)
+      {
+        checksum += (fileIndex + pointerIndex) * file.ID;
+      }
+      pointerIndex += file.Length;
+    }
+
+    return checksum;
+  }
+
+  struct File
+  {
+    public int ID { get; init; }
+    public int Length { get; init; }
+    public bool IsFreeSpace => ID == -1;
+  }
 }
