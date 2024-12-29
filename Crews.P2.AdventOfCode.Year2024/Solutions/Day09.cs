@@ -59,18 +59,6 @@ public class Day09 : Solution
 
   private static long GetChecksumPart2(List<File> files)
   {
-    Console.WriteLine(
-      string.Join(", ", files.Take(100).Select(file => $"{file.ID} ({file.Length})"))
-    );
-
-    Console.WriteLine();
-
-    Console.WriteLine(
-      string.Join(", ", files.Skip(19900).Select(file => $"{file.ID} ({file.Length})"))
-    );
-
-    Console.WriteLine();
-
     for (int reverseIndex = files.Count - 1; reverseIndex >= 0; reverseIndex--)
     {
       File reverseFile = files[reverseIndex];
@@ -96,10 +84,6 @@ public class Day09 : Solution
         break;
       }
     }
-
-    Console.WriteLine(
-      string.Join(", ", files.Take(100).Select(file => $"{file.ID} ({file.Length})"))
-    );
 
     return CalculateChecksum(files);
   }
